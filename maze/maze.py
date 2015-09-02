@@ -20,24 +20,22 @@ class MazeSolver:
 
         solution = self.solve_maze(start_location)
 
-        #self.print_maze(solution=solution)
-        self.print_maze(solution=[(1,1),(2,1),(3,1)])
+        # Print the start of a solution
+        self.print_maze(solution=[(1,0),(1,1),(2,1),(3,1)])
 
 
     def print_maze(self, solution=None):
         print 'Solution: ' + str(solution)
 
         # Check that solution makes sense
+        if not self._check_solution(solution):
+            raise Exception('Solution is wrong!')
 
         for y in range(len(self.maze)):
             for x in range(len(self.maze[0])):
-                if solution is not None and (y,x) in solution:
-                    if self.maze[y][x] == ' ':
-                        # Need sys.stdout to print a char with no space or newline
-                        sys.stdout.write(u"\U0001F4A9")
-                    else:
-                        if self.maze[y][x] not in ('S', 'E'):
-                            raise Exception('You can\'t travel through walls!')
+                if solution is not None and (y,x) in solution and self.maze[y][x] == ' ':
+                    # Need sys.stdout to print a char with no space or newline
+                    sys.stdout.write(u"\U0001F4A9")
                 else:
                     if self.maze[y][x] == 'E':
                         sys.stdout.write(u"\U0001F382")
@@ -60,13 +58,29 @@ class MazeSolver:
 
     def _check_solution(self, solution, check_end=False):
         # Needs to start at ... the start
+        if self.maze[solution[0][0]][solution[0][1]] != 'S':
+            print 'Solution needs to start at the start silly!'
+            return False
 
+        # Should end at ... the end
+        if check_end and self.maze[solution[-1][0]][solution[-1][1]] != 'E':
+            print 'Solution needs to end at the end silly!'
+            return False
 
         # Each point needs to be next to each other
+        # Also make sure point is in an allowable thing (' ', 'S', 'E')
+        for i in range(len(solution)-1):
+            if solution[i+1] not in self._open_directions(solution[i]):
+                print 'The points need to be next to each other!'
+                return False
+            if self.maze[solution[i][0]][solution[i][1]] not in (' ', 'S' , 'E'):
+                print 'You can\'t travel through walls!'
+                return False
 
         # Could check for backtracking but seems OK
 
-        pass
+        return True
+        #pass
 
     # Find the location of the 'S' character
     def _find_start(self):
