@@ -1,5 +1,6 @@
 from optparse import OptionParser
 import sys
+import random
 
 # Solve mazes generated from http://www.delorie.com/game-room/mazes/genmaze.cgi
 # Probably should make sure cells are size 2
@@ -23,7 +24,11 @@ class MazeSolver:
         # Print the start of a solution
         self.print_maze(solution=[(1,0),(1,1),(2,1),(3,1)])
 
+    # Solve the maze from this point (a tuple)
+    def solve_maze(self, point):
+        pass
 
+    # Show the maze, optionally including a (partial) solution
     def print_maze(self, solution=None):
         print 'Solution: ' + str(solution)
 
@@ -35,7 +40,7 @@ class MazeSolver:
             for x in range(len(self.maze[0])):
                 if solution is not None and (y,x) in solution and self.maze[y][x] == ' ':
                     # Need sys.stdout to print a char with no space or newline
-                    sys.stdout.write(u"\U0001F4A9")
+                    sys.stdout.write(random.choice([u"\U0001F600",u"\U0001F601",u"\U0001F602",u"\U0001F603",u"\U0001F604",u"\U0001F605"]))
                 else:
                     if self.maze[y][x] == 'E':
                         sys.stdout.write(u"\U0001F382")
@@ -44,17 +49,12 @@ class MazeSolver:
 
             print
 
-    # Solve the maze from this point (a tuple)
-    def solve_maze(self, point):
-        pass
-
-    # Find the location of a specific character in the maze (S, E)
-    def _find_char_loc(self, char):
+    # Find the location of the 'S' character
+    def _find_start(self):
         for y in range(len(self.maze)):
             for x in range(len(self.maze[0])):
-                if self.maze[y][x] == char:
+                if self.maze[y][x] == 'S':
                     return (y,x)
-        #pass
 
     def _check_solution(self, solution, check_end=False):
         # Needs to start at ... the start
@@ -80,17 +80,6 @@ class MazeSolver:
         # Could check for backtracking but seems OK
 
         return True
-        #pass
-
-    # Find the location of the 'S' character
-    def _find_start(self):
-        return self._find_char_loc('S')
-        #pass
-
-    # Find the location of the 'E' character
-    def _find_end(self):
-        return self._find_char_loc('E')
-        #pass
 
     # Check if a point is on the map (i.e. false for (-1,-2) tuple)
     def _is_in_bounds(self, point):
