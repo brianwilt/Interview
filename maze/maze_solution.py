@@ -28,13 +28,17 @@ class MazeSolver:
     # Solve the maze from this point (a tuple)
     def solve_maze(self, point, current_path=[]):
         current_path.append(point)
+        # End condition
         if self.maze[point[0]][point[1]] == 'E':
             return current_path
 
+        # Look at open directions to go from here
         for dir in self._open_directions(point):
+            # Can't visit old places, otherwise will loop
             if dir not in self.visited:
                 self.visited.append(dir)
 
+                # Have to slice, otherwise all recursions adding to same path
                 solution = self.solve_maze(dir, list(current_path))
 
                 if solution:
@@ -133,30 +137,6 @@ class MazeSolver:
             open_dirs.append(new_dir)
 
         return open_dirs
-
-    def _get_sol(self, point=None, runs=None):
-        if point is not None and runs is None:
-            self._get_sol(runs=self._move(point))
-        if point is None and runs is not None:
-            if type(self._move(point)) == tuple:
-                sol = self._move(point)
-                return sol
-            elif type(self._move(point)) == list:
-                dead_ends = map(lambda items: items[-1], self._move(point))
-                for dead_end in dead_ends:
-                    self._get_sol(runs=self._move(dead_end))
-
-    def _move(self, point, runs=None):
-        open_dirs = self._open_directions(point)
-        if runs is None and len(open_dirs) > 0:
-            runs = [list() for direction in open_dirs]
-            for index, direction in enumerate(open_dirs):
-                runs[index].append(direction)
-            self._move(point, runs)
-        elif runs is not None and len(runs) > 0:
-            return runs
-        else:
-            return point
 
 def main():
     parser = OptionParser()
