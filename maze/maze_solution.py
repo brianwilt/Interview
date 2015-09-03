@@ -8,12 +8,37 @@ import random
 class MazeSolver:
     maze = []
     visited = []
+    person_emoji_list = [u"\U0001F600",u"\U0001F601",u"\U0001F602",u"\U0001F603",u"\U0001F604",u"\U0001F605"]
 
     def __init__(self, maze_file):
         print 'Loading maze ...'
-        with open(maze_file, 'r') as maze_file:
-            for l in maze_file:
-                self.maze.extend([l.strip()])
+        if maze_file:
+            with open(maze_file, 'r') as maze_file:
+                for l in maze_file:
+                    self.maze.extend([l.strip()])
+        else:
+            # So we can run this in online code screens, hardcode in
+            self.maze.extend(['+-+-+-+-+-+-+-+-+-+-+'])
+            self.maze.extend(['S |       |         |'])
+            self.maze.extend(['+ + +-+-+ + + +-+-+-+'])
+            self.maze.extend(['|   |   |   |       |'])
+            self.maze.extend(['+-+-+ + +-+-+-+-+-+ +'])
+            self.maze.extend(['| |   |         |   |'])
+            self.maze.extend(['+ + +-+-+ +-+-+-+ +-+'])
+            self.maze.extend(['| | |     |       | |'])
+            self.maze.extend(['+ + +-+-+-+ +-+-+-+ +'])
+            self.maze.extend(['| |     |     |     |'])
+            self.maze.extend(['+ +-+-+ + +-+ + +-+-+'])
+            self.maze.extend(['|     | |   |   |   |'])
+            self.maze.extend(['+-+-+ + +-+ +-+-+ + +'])
+            self.maze.extend(['|     | | | |   | | |'])
+            self.maze.extend(['+ +-+-+ + + + + + + +'])
+            self.maze.extend(['|   |   |     |   | |'])
+            self.maze.extend(['+ + + +-+-+-+-+-+-+ +'])
+            self.maze.extend(['| |   |         |   |'])
+            self.maze.extend(['+ +-+-+ +-+-+-+ + + +'])
+            self.maze.extend(['|       |         | E'])
+            self.maze.extend(['+-+-+-+-+-+-+-+-+-+-+'])
         print 'Maze loaded.'
 
         # Find the start of the maze
@@ -58,7 +83,7 @@ class MazeSolver:
             for x in range(len(self.maze[0])):
                 if solution is not None and (y,x) in solution and self.maze[y][x] == ' ':
                     # Need sys.stdout to print a char with no space or newline
-                    print random.choice([u"\U0001F600",u"\U0001F601",u"\U0001F602",u"\U0001F603",u"\U0001F604",u"\U0001F605"]),
+                    print random.choice(self.person_emoji_list),
                 else:
                     if self.maze[y][x] == 'E':
                         print u"\U0001F382",
@@ -144,17 +169,12 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    config_maze_file = ''
+    config_maze_file = None
 
-    if not options.config_maze_file:
-        print 'Path to maze file must be specified'
-        sys.exit(-1)
-    else:
+    if options.config_maze_file:
         config_maze_file = options.config_maze_file
 
     ms = MazeSolver(config_maze_file)
-
-
 
 if __name__ == "__main__":
     main()

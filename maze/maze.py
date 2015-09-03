@@ -7,12 +7,38 @@ import random
 
 class MazeSolver:
     maze = []
+    visited = []
+    person_emoji_list = [u"\U0001F600",u"\U0001F601",u"\U0001F602",u"\U0001F603",u"\U0001F604",u"\U0001F605"]
 
     def __init__(self, maze_file):
         print 'Loading maze ...'
-        with open(maze_file, 'r') as maze_file:
-            for l in maze_file:
-                self.maze.extend([l.strip()])
+        if maze_file:
+            with open(maze_file, 'r') as maze_file:
+                for l in maze_file:
+                    self.maze.extend([l.strip()])
+        else:
+            # So we can run this in online code screens, hardcode in
+            self.maze.extend(['+-+-+-+-+-+-+-+-+-+-+'])
+            self.maze.extend(['S |       |         |'])
+            self.maze.extend(['+ + +-+-+ + + +-+-+-+'])
+            self.maze.extend(['|   |   |   |       |'])
+            self.maze.extend(['+-+-+ + +-+-+-+-+-+ +'])
+            self.maze.extend(['| |   |         |   |'])
+            self.maze.extend(['+ + +-+-+ +-+-+-+ +-+'])
+            self.maze.extend(['| | |     |       | |'])
+            self.maze.extend(['+ + +-+-+-+ +-+-+-+ +'])
+            self.maze.extend(['| |     |     |     |'])
+            self.maze.extend(['+ +-+-+ + +-+ + +-+-+'])
+            self.maze.extend(['|     | |   |   |   |'])
+            self.maze.extend(['+-+-+ + +-+ +-+-+ + +'])
+            self.maze.extend(['|     | | | |   | | |'])
+            self.maze.extend(['+ +-+-+ + + + + + + +'])
+            self.maze.extend(['|   |   |     |   | |'])
+            self.maze.extend(['+ + + +-+-+-+-+-+-+ +'])
+            self.maze.extend(['| |   |         |   |'])
+            self.maze.extend(['+ +-+-+ +-+-+-+ + + +'])
+            self.maze.extend(['|       |         | E'])
+            self.maze.extend(['+-+-+-+-+-+-+-+-+-+-+'])
         print 'Maze loaded.'
 
         # Find the start of the maze
@@ -22,30 +48,30 @@ class MazeSolver:
         solution = self.solve_maze(start_location)
 
         # Print the start of a solution
-        self.print_maze(solution=[(1,0),(1,1),(2,1),(3,1)])
+        self.print_maze(solution=solution) # self._get_sol(start_location))
 
     # Solve the maze from this point (a tuple)
-    def solve_maze(self, point):
-        pass
+    def solve_maze(self, point, current_path=[]):
+        return None
 
     # Show the maze, optionally including a (partial) solution
     def print_maze(self, solution=None):
         print 'Solution: ' + str(solution)
 
         # Check that solution makes sense
-        if not self._check_solution(solution):
+        if solution is not None and not self._check_solution(solution):
             raise Exception('Solution is wrong!')
 
         for y in range(len(self.maze)):
             for x in range(len(self.maze[0])):
                 if solution is not None and (y,x) in solution and self.maze[y][x] == ' ':
                     # Need sys.stdout to print a char with no space or newline
-                    sys.stdout.write(random.choice([u"\U0001F600",u"\U0001F601",u"\U0001F602",u"\U0001F603",u"\U0001F604",u"\U0001F605"]))
+                    print random.choice(self.person_emoji_list),
                 else:
                     if self.maze[y][x] == 'E':
-                        sys.stdout.write(u"\U0001F382")
+                        print u"\U0001F382",
                     else:
-                        sys.stdout.write(self.maze[y][x])
+                        print self.maze[y][x],
 
             print
 
@@ -71,10 +97,10 @@ class MazeSolver:
         # Also make sure point is in an allowable thing (' ', 'S', 'E')
         for i in range(len(solution)-1):
             if solution[i+1] not in self._open_directions(solution[i]):
-                print 'The points need to be next to each other!'
+                print 'The points need to be next to each other: %s and %s' % (solution[i], solution[i+1])
                 return False
             if self.maze[solution[i][0]][solution[i][1]] not in (' ', 'S' , 'E'):
-                print 'You can\'t travel through walls!'
+                print 'You can\'t travel through walls: %s' % str(solution[i])
                 return False
 
         # Could check for backtracking but seems OK
@@ -120,24 +146,18 @@ class MazeSolver:
 
         return open_dirs
 
-
 def main():
     parser = OptionParser()
     parser.add_option("-f", "--maze_file", dest="config_maze_file", help="Name of the file with the maze in it")
 
     (options, args) = parser.parse_args()
 
-    config_maze_file = ''
+    config_maze_file = None
 
-    if not options.config_maze_file:
-        print 'Path to maze file must be specified'
-        sys.exit(-1)
-    else:
+    if options.config_maze_file:
         config_maze_file = options.config_maze_file
 
     ms = MazeSolver(config_maze_file)
-
-
 
 if __name__ == "__main__":
     main()
