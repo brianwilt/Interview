@@ -83,10 +83,10 @@ class MazeSolver:
             for x in range(len(self.maze[0])):
                 if solution is not None and (y,x) in solution and self.maze[y][x] == ' ':
                     # Need sys.stdout to print a char with no space or newline
-                    print random.choice(self.person_emoji_list),
+                    print random.choice(self.person_emoji_list).encode('utf-8'),
                 else:
                     if self.maze[y][x] == 'E':
-                        print u"\U0001F382",
+                        print u"\U0001F382".encode('utf-8'),
                     else:
                         print self.maze[y][x],
 
